@@ -11,7 +11,7 @@ const blog=new Hono<{
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign, verify } from 'hono/jwt'
-
+import { createPostInput,updatePostInput } from '@zeroshark123/common';
 
 blog.use(async (c, next) => {
     const header=c.req.header("authorization") || "";
@@ -33,6 +33,12 @@ blog.post('/',async (c)=>{
     }).$extends(withAccelerate());
     const id=c.get('userId');
     const body=await c.req.json();
+    const { success }=createPostInput.safeParse(body);
+    if(!success){
+        return c.json({
+            message:"Invalid Input's"
+        })
+    }
     const post=await prisma.post.create({
         data:{
             title:body.title,
@@ -53,6 +59,12 @@ blog.put('/',async(c)=>{
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
     const body=await c.req.json();
+    const {success}=updatePostInput.safeParse(body);
+    if(!success){
+        return c.json({
+            message:"Invalid Input's"
+        })
+    }
     await prisma.post.update({
         where:{
             id:body.id,

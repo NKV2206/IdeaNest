@@ -10,14 +10,20 @@ const user=new Hono<{
 }>();
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { sign, verify } from 'hono/jwt'
-
+import { sign } from 'hono/jwt'
+import { signupInput,signinInput } from '@zeroshark123/common';
 
 user.post('/signup',async (c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
     const body=await c.req.json();
+    const {success}=signupInput.safeParse(body);
+    if(!success){
+      return c.json({
+        message:"Invalid Inputs"
+      })
+    }
     try{
       const user=await prisma.user.create({
         data:{
@@ -25,9 +31,11 @@ user.post('/signup',async (c)=>{
           password: body.password,
         }
       })
+      console.log('hello')
       const jwt=await sign({id:user.id},c.env.JWT_SECRET);
       return c.json({jwt});
     }catch(e){
+      console.log('catch')
       return c.status(403);
     }
   })
@@ -39,6 +47,12 @@ user.post('/signup',async (c)=>{
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
     const body=await c.req.json();
+    const{success}=signinInput.safeParse(body);
+    if(!success){
+      return c.json({
+        message:"Invalid Inputs"
+      })
+    }
     const valid=await prisma.user.findUnique({
       where:{
         email:body.email,
