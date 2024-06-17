@@ -1,42 +1,64 @@
-import { ChangeEvent, useState } from "react"
-import { SignupInput } from "@zeroshark123/common"
+import {  ChangeEvent, useState } from "react"
+import { SigninInput} from "@zeroshark123/common"
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
+
 interface inputType{
     Input:string,
     placeholder:string,
     onChange:(e:ChangeEvent<HTMLInputElement>)=>void,
     type?:string
 }
-export function Auth(){
-    const postInputs=useState<SignupInput>({
-        name:"",
+
+
+
+export default function SignInAuth(){
+    const [postInputs,setPostInputs]=useState<SigninInput>({
         email:"",
         password:""
     })
+    const navigate=useNavigate();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    async function sendRequest(){
+        try{
+            const response=await axios.post(`${BACKEND_URL}/api/v1/user/signin`,postInputs);
+            const jwt=await response.data.jwt;
+            localStorage.setItem('token',jwt);
+            navigate('/blogs')
+        }catch(e){
 
+        }
+    }
     function togglePasswordVisibility() {
         setIsPasswordVisible((prevState) => !prevState);
     }
     return (
-        <div className="flex flex-col justify-center  h-screen">
-            <div className="text-3xl font-bold flex justify-center">
-                Create an Account
+        
+        <div className="flex flex-col justify-center h-screen">
+            <div className="text-3xl font-bold flex justify-center pb-2">
+                IdeaNest
             </div>
             <div className="pt-1 text-md text-gray-400 flex justify-center font-semibold">
-                Already have an account ?  <a  href="/signin" className="underline pl-1">Login</a>
+               Don't have an account ?  <Link className="pl-2 underline" to={'/signup'}>Sign up</Link>
             </div>
-            <LabeledInput Input={"Username"} placeholder="Enter your username" onChange={()=>{
-                console.log("hello");
-            }}></LabeledInput>
-            <LabeledInput Input={"Email"} placeholder="m@gmail.com" onChange={()=>{
-                console.log("hello");
+            <LabeledInput Input={"Email"} placeholder="m@gmail.com" onChange={(e)=>{
+                setPostInputs({
+                            ...postInputs,
+                            email:e.target.value
+                        })
             }}></LabeledInput>
             <label className="font-2xl font-bold w-[60%] mx-auto mt-2 ">Password</label>
             <div className="relative w-[60%] container mx-auto border border-solid rounded-xl mt-1">
                 <input
                     type={isPasswordVisible ? "text" : "password"}
                     placeholder="Password"
-                    className="w-full px-4 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
+                    className="w-full px-4 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1" onChange={(e)=>{
+                        setPostInputs({
+                            ...postInputs,
+                            password:e.target.value
+                        })
+                    }}
                 />
                 <button
                     className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"
@@ -81,8 +103,8 @@ export function Auth(){
                 </button>
                 </div>
             
-            <button className="w-[60%] mx-auto flex justify-center text-center mt-4 border border-gray-800 bg-black rounded-lg p-3 text-white">
-                Sign Up
+            <button onClick={sendRequest} className="w-[60%] mx-auto flex justify-center text-center mt-4 border border-gray-800 bg-black rounded-lg p-3 text-white">
+                Sign in
             </button>
         </div>
     )
