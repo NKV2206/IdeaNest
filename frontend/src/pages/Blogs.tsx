@@ -1,9 +1,25 @@
+import { Appbar } from "../Components/Appbar";
 import { BlogCard } from "../Components/BlogCard";
+import { LoaderBlogs } from "../Components/LoaderBlogs";
+import { useBlogs } from "../hooks";
 
 export function Blogs(){
+    const {loading,blogs}=useBlogs();
+    if(loading){
+        return (
+            <LoaderBlogs/>
+        )
+
+    }
     return (
+        
         <div>
-            <BlogCard author={'Nandu'} publishedDate={"12-12-2022"} title={"Welcome to Earth"} content={"Homo Sapiens will fall BUhahahahcefcefceceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeejbcojbd;cjbq;debckwqbdckb dkcb    wkdckqb dcwdcbwdojcb;wkd w bcojbc   bqefkjcb'jbcjkwdb ibojbncjj bdojbn'lkcno'wjdnc iho'bnecoubwdcn "}/>
+            <Appbar author={'Nandu'}/>
+        <div className="flex justify-center ">
+            <div className="">   
+            {blogs.map(item => <BlogCard author={item.author.name|| 'Anonymous'} key={item.id} id={item.id} publishedDate={"2012-12-23"} title={item.title} content={item.content}/>)}
+            </div>       
+        </div>
         </div>
     )
 }
