@@ -10,7 +10,7 @@ const blog=new Hono<{
 }>();
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { sign, verify } from 'hono/jwt'
+import { verify } from 'hono/jwt'
 import { createPostInput,updatePostInput } from '@zeroshark123/common';
 
 blog.use(async (c, next) => {
@@ -84,7 +84,18 @@ blog.get('/bulk',async (c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
-    const posts=await prisma.post.findMany({});
+    const posts=await prisma.post.findMany({
+        select:{
+            title:true,
+            content:true,
+            id:true,
+            author:{
+                select:{
+                    name:true
+                }
+            }
+        }
+    });
     return c.json({
         posts:posts
     })
