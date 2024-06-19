@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from '../assets/Idea.png'
 export function Appbar({author}:{author:string}){
     const navigate=useNavigate();
@@ -11,6 +11,11 @@ export function Appbar({author}:{author:string}){
             <img src={logo} className="h-9"></img>
         </div>
         </button>
+        <div>
+        <Link to={'/publish'}>
+        <button type="button" className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-1.5 text-center me-2 mb-2 mr-4 ">New</button>
+        </Link>
+        
         <button onClick={()=>{
             navigate('/signin')
             localStorage.setItem('token',"")
@@ -19,6 +24,7 @@ export function Appbar({author}:{author:string}){
                 <Avatar author={author} /> 
             </div>
         </button>
+        </div>
         
     </div>
     )

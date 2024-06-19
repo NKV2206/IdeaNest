@@ -103,7 +103,7 @@ export default function SignInAuth(){
                 </button>
                 </div>
             
-            <button onClick={sendRequest} className="w-[60%] mx-auto flex justify-center text-center mt-4 border border-gray-800 bg-black rounded-lg p-3 text-white">
+            <button type='submit' onClick={sendRequest} className="w-[60%] mx-auto flex justify-center text-center mt-4 border border-gray-800 bg-black rounded-lg p-3 text-white">
                 Sign in
             </button>
         </div>
